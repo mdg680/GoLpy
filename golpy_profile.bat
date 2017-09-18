@@ -1,0 +1,1 @@
+python -m cProfile -s tottime .\golpy.py > .\pprofile.txt
