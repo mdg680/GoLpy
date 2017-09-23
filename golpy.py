@@ -1,6 +1,6 @@
-import sys, getopt
+import sys
+import getopt
 import pygame
-import time
 
 SCRN_DIM = (800, 600)
 SCALE = 8
@@ -14,7 +14,7 @@ def main(argv):
     input_selection = ''
 
     try:
-        opts, args = getopt.getopt(argv,'crde:', ['selection=', 'dim_x=', 'dim_y='])
+        opts, args = getopt.getopt(argv, 'crde:', ['selection=', 'dim_x=', 'dim_y='])
     except getopt.GetoptError:
         print "select mode and selection"
         sys.exit(2)
@@ -35,13 +35,12 @@ def gol():
     from grid import Grid as g
     from lifes import Lifes as l
 
-    
+
     # Loaded grid
     #current_grid = g(l.blinker)
-    
-    # Random grid
+
+    # Empty Grid
     current_grid = g((240, 135))
-    #current_grid.rand_fill()    
     # exit condition
     exit_cond = False
 
@@ -53,7 +52,7 @@ def gol():
     screen = pygame.display.set_mode(
         (current_grid.get_height() * SCALE,
          current_grid.get_width() * SCALE), pygame.FULLSCREEN)
-    
+
     # Initialize clock
     clock = pygame.time.Clock()
 
@@ -71,7 +70,7 @@ def gol():
 
         if not paused:
             current_grid.iterate_optimized()
-        
+
         #print clock.get_fps()
         screen.fill(BLACK)
         #pygame.draw.line(screen, (0, 0, 200), (0, 49),(400, 49))
@@ -85,7 +84,12 @@ def gol():
                 if cell == 1:
                     pygame.draw.rect(screen, WHITE, (x * SCALE, y * SCALE, SCALE, SCALE))
 
-        pygame.draw.rect(screen, (100, 000, 100), (pygame.mouse.get_pos()[0] - (pygame.mouse.get_pos()[0] % 8), pygame.mouse.get_pos()[1] - (pygame.mouse.get_pos()[1] % SCALE), SCALE, SCALE))
+        mouse_x_pos = pygame.mouse.get_pos()[0]
+        mouse_y_pos = pygame.mouse.get_pos()[1]
+
+        pygame.draw.rect(screen, (100, 000, 100),
+                         (mouse_x_pos - (mouse_x_pos % SCALE),
+                          mouse_y_pos - (mouse_y_pos % SCALE), SCALE, SCALE))
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -102,7 +106,9 @@ def gol():
                     current_grid.rand_fill()
             
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                current_grid.array[(pygame.mouse.get_pos()[0] - (pygame.mouse.get_pos()[0] % 8))/8][(pygame.mouse.get_pos()[1] - (pygame.mouse.get_pos()[0] % 8))/8] = 1
+                insert_index_in_x = (mouse_x_pos - (mouse_x_pos % SCALE)) / SCALE
+                insert_index_in_y = (mouse_y_pos - (mouse_y_pos % SCALE)) / SCALE
+                current_grid.array[insert_index_in_x][insert_index_in_y] = 1
 
 
         pygame.display.flip()
